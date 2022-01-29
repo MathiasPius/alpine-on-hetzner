@@ -1,0 +1,179 @@
+---
+- name: prepare environment
+  hosts: localhost
+  tasks:
+  - name: cache apk tools
+    get_url:
+      url: "{{ apk_tools_url }}"
+      dest: /cache/apk.static
+      checksum: "{{ apk_tools_checksum }}"
+
+- name: configure alpine
+  hosts: all
+  gather_facts: false
+  vars:
+    chroot_directory: /mnt
+    root_device_path: "/dev/sda"
+  tasks:
+  - name: deploy apk-tools to rescue system
+    copy:
+      src: /cache/apk.static
+      dest: apk
+      mode: ug=rwx,o=r
+
+  - name: "zap all partitions on {{ root_device_path }} and create GPT table"
+    shell: "sgdisk --zap-all {{ root_device_path }}"
+
+  - name: "create boot partition {{ root_device_path }}-boot"
+    shell: "sgdisk -g -n1:0:{{ boot_size }} -t1:8300 -c1:boot -A1:set:2 {{ root_device_path }}"
+
+  - name: "create root partition {{ root_device_path }}-root"
+    shell: "sgdisk -g -n2:0:{{ root_size }} -t2:8300 -c2:root {{ root_device_path }}"
+
+  - name: mount-drives
+    shell: |
+      umount -R /mnt
+
+      mkfs.ext4      -q -L root /dev/disk/by-partlabel/root
+      mkfs.ext4 -m 0 -q -L boot /dev/disk/by-partlabel/boot
+      mount /dev/disk/by-partlabel/root {{ chroot_directory }}
+      mkdir -p {{ chroot_directory }}/boot
+      mount /dev/disk/by-partlabel/boot {{ chroot_directory }}/boot
+
+  - name: initialize alpine-base in directory
+    shell: >-
+      ./apk -X {{ alpine_mirror }}/{{ alpine_version }}/{{ alpine_repositories[0] }}
+      -u 
+      --allow-untrusted 
+      --root /{{ chroot_directory }} 
+      --initdb 
+      add alpine-base
+  
+  - name: prepare chroot
+    shell: |
+      mount --bind /dev  {{ chroot_directory }}/dev
+      mount --bind /proc {{ chroot_directory }}/proc
+      mount --bind /sys  {{ chroot_directory }}/sys
+
+  - name: copy resolv conf from the rescue system to the server
+    copy:
+      content: |
+        nameserver 185.12.64.1
+        nameserver 185.12.64.2
+        nameserver 2a01:4ff:ff00::add:1
+        nameserver 2a01:4ff:ff00::add:2
+      dest: "{{ chroot_directory }}/etc/resolv.conf"
+  
+  - name: setup networking
+    copy:
+      content: |
+        auto lo
+        iface lo inet loopback
+        auto eth0
+        iface eth0 inet dhcp
+        iface eth0 inet6 auto
+      dest: "{{ chroot_directory }}/etc/network/interfaces"
+
+  - name: write out hostname file
+    copy:
+      dest: "{{ chroot_directory }}/etc/hostname"
+      content: "{{ hostname }}"
+
+  - name: overwrite hosts file
+    copy:
+      dest: "{{ chroot_directory }}/etc/hosts"
+      content: |
+        127.0.0.1	{{ hostname }} localhost localhost.localdomain
+        ::1		    {{ hostname }} localhost localhost.localdomain
+        ::1       {{ hostname }} localhost ipv6-localhost ipv6-loopback
+        fe00::0   ipv6-localnet
+        ff00::0   ipv6-mcastprefix
+        ff02::1   ipv6-allnodes
+        ff02::2   ipv6-allrouters
+        ff02::3   ipv6-allhosts
+
+  - name: define alpine repositories
+    copy:
+      dest: "{{ chroot_directory }}/etc/apk/repositories"
+      content: |
+        {% for repository in alpine_repositories %}
+        {% if loop.first %}
+        {{ alpine_mirror }}/{{ alpine_version }}/{{ repository }}
+        {% else %}
+        @{{ repository }}  {{ alpine_mirror }}/{{ alpine_version }}/{{ repository }}
+        {% endif %}
+        {% endfor %}
+
+  - name: install requisite packages
+    shell: |
+      chroot {{ chroot_directory }} apk add --no-cache {{ item.key }}{{ item.value }}
+    loop: "{{ packages | dict2items }}"
+
+  - name: configure services
+    shell: |
+      chroot {{ chroot_directory }} rc-update add devfs sysinit
+      chroot {{ chroot_directory }} rc-update add dmesg sysinit
+      chroot {{ chroot_directory }} rc-update add mdev sysinit
+      chroot {{ chroot_directory }} rc-update add hwdrivers sysinit
+
+      chroot {{ chroot_directory }} rc-update add hwclock boot
+      chroot {{ chroot_directory }} rc-update add modules boot
+      chroot {{ chroot_directory }} rc-update add sysctl boot
+      chroot {{ chroot_directory }} rc-update add hostname boot
+      chroot {{ chroot_directory }} rc-update add bootmisc boot
+      chroot {{ chroot_directory }} rc-update add syslog boot
+      chroot {{ chroot_directory }} rc-update add networking boot
+      chroot {{ chroot_directory }} rc-update add qemu-guest-agent boot
+
+      chroot {{ chroot_directory }} rc-update add mount-ro shutdown
+      chroot {{ chroot_directory }} rc-update add killprocs shutdown
+      chroot {{ chroot_directory }} rc-update add savecache shutdown
+
+      chroot {{ chroot_directory }} rc-update add sshd default
+
+  - name: enable cloud-init
+    shell: |
+      chroot {{ chroot_directory }} setup-cloud-init
+
+  - name: configure fstab
+    copy:
+      dest: "{{ chroot_directory }}/etc/fstab"
+      content: |
+        LABEL=root  /      ext4  defaults,noatime   0 0
+        LABEL=boot  /boot  ext4  defaults           0 2
+    
+  - name: configure kernel modules
+    copy:
+      dest: "{{ chroot_directory }}/etc/modules"
+      content: |
+        af_packet
+        ipv6
+
+  # - name: configure extlinux
+  #   copy:
+  #     dest: "{{ chroot_directory }}/etc/update-extlinux.conf"
+  #     content: |
+  #       overwrite=1
+  #       vesa_menu=0
+  #       default_kernel_opts="quiet"
+  #       modules=sd-mod,usb-storage,ext4
+  #       root={{ root_device_path }}
+  #       verbose=0
+  #       hidden=1
+  #       timeout=1
+  #       default=grsec
+  #       serial_port=
+  #       serial_baud=115200
+  #       xen_opts=dom0_mem=256M
+  #       password=''
+
+  - name: configure mkinitfs
+    copy:
+      dest: "{{ chroot_directory }}/etc/mkinitfs/mkinitfs.conf"
+      content: features="ata base cdrom ext4 keymap kms mmc raid scsi usb virtio"
+
+  # chroot {{ chroot_directory }} update-extlinux
+  - name: install boot
+    shell: |
+      chroot {{ chroot_directory }} extlinux -i /boot
+      chroot {{ chroot_directory }} dd bs=440 conv=notrunc count=1 if=/usr/share/syslinux/gptmbr.bin of={{ root_device_path }}

@@ -1,0 +1,26 @@
+{
+    "apk_tools_version":  "v2.12.9",
+    "apk_tools_arch":     "x86_64",
+    "apk_tools_url":      "https://gitlab.alpinelinux.org/api/v4/projects/5/packages/generic//{{ apk_tools_version }}/{{ apk_tools_arch }}/apk.static",
+    "apk_tools_checksum": "sha256:5176da3d4c41f12a08b82809aca8e7e2e383b7930979651b8958eca219815af5",
+
+    "alpine_version":      "v3.15",
+    "alpine_mirror":       "http://dl-cdn.alpinelinux.org/alpine",
+    "alpine_repositories": ["main", "community"],
+
+    "boot_size": "+512m",
+    "root_size": "0",
+
+    "hostname": "alpine-{{ alpine_version }}",
+
+    "packages": {
+        "doas":             "=6.8.1-r7",
+        "openssh":          "=8.8_p1-r1",
+        "syslinux":         "=6.04_pre1-r9",
+        "linux-virt":       "=5.15.16-r0",
+        "cloud-init":       "@community=21.4-r0",
+        "qemu-guest-agent": "@community=6.1.0-r2"
+    },
+
+    "extlinux_modules": ["sd-mod", "usb-storage", "ext4"]
+}
