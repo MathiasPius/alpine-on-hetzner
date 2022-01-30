@@ -39,7 +39,7 @@ Any command arguments passed to the docker run invocation will be treated as pat
 The merge is a "deep merge", meaning you can only *add to* or *change* the configuration file not remove from it. If you want to remove a package from the default.json configuration for example you will have to create a copy of it without the package in question and use that as the basis for your build.
 
 ## Adding a custom package to your image
-In order to add a custom package, like `nginx` for example, you can create the following config file `configs/nginx.json` in your local directory:
+In order to add a custom package like `nginx` for example you can create the following config file `configs/nginx.json` in your local directory:
 ```json
 { "packages": { "nginx": "" } }
 ```
