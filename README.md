@@ -5,13 +5,13 @@ You can either run it as a docker container or as a regular packer build (see [e
 
 # Examples
 
-## Create an alpine image with the [default](/default.json) configuration
+### Create an alpine image with the [default](/default.json) configuration
 Running this will create an `alpine` snapshot within your Hetzner Cloud project, ready to use for creating new servers. See the [launching a server](#launching-a-server) section for how to test it!
 ```shell
 docker run -it --rm -e "HCLOUD_TOKEN=<YourTokenHere>" ghcr.io/mathiaspius/alpine-on-hetzner:latest
 ```
 
-## Default image, with `doas` installed, and `template.local` as default hostname
+### Default image, with `doas` installed, and `template.local` as default hostname
 Configuration values can be overwritten by creating new configuration file with just the changes you want, and supplying the path as an argument when running it. See [Custom Configuration](#custom-configuration) for technical details on how the values are merged.
 ```shell
 mkdir -p configs
@@ -38,7 +38,7 @@ Any command arguments passed to the docker run invocation will be treated as pat
 
 The merge is a "deep merge", meaning you can only *add to* or *change* the configuration file not remove from it. If you want to remove a package from the default.json configuration for example you will have to create a copy of it without the package in question and use that as the basis for your build.
 
-## Adding a custom package to your image
+### Adding a custom package to your image
 In order to add a custom package like `nginx` for example you can create the following config file `configs/nginx.json` in your local directory:
 ```json
 { "packages": { "nginx": "" } }
