@@ -43,7 +43,7 @@ jobs:
         id: lowercased_name
         with:
           result-encoding: string
-          script: return `${env.IMAGE_NAME.toLowerCase()}`
+          script: return `${github.repository.toLowerCase()}`
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
