@@ -170,7 +170,7 @@
   - name: configure mkinitfs
     copy:
       dest: "{{ chroot_directory }}/etc/mkinitfs/mkinitfs.conf"
-      content: features="ata base cdrom ext4 keymap kms mmc raid scsi usb virtio"
+      content: features="base ext4 keymap virtio"
 
   - name: install boot
     shell: |
