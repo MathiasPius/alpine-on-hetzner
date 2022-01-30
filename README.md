@@ -12,7 +12,7 @@ docker run -it --rm -e "HCLOUD_TOKEN=<YourTokenHere>" alpine-on-hetzner:latest
 ```
 
 ## Default image, with `doas` installed, and `template.local` as default hostname
-Configuration values can be overwritten by creating new configuration file with just the changes you want, and supplying the path as an argument when running it.
+Configuration values can be overwritten by creating new configuration file with just the changes you want, and supplying the path as an argument when running it. See [Custom Configuration](#custom-configuration) for technical details on how the values are merged.
 ```shell
 mkdir -p configs
 echo '{ 
