@@ -11,7 +11,7 @@
     "boot_size": "+512m",
     "root_size": "0",
 
-    "hostname": "alpine-{{ alpine_version }}",
+    "hostname": "alpine",
 
     "packages": {
         "openssh":          "=8.8_p1-r1",
