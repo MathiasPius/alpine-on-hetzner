@@ -31,26 +31,11 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
-            type=sha
-
-      - name: Extract commit sha so we can hopefully reuse layers
-        id: commit-sha
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          cache-from: type=registry,ref=${{ steps.meta.outputs.tags[0] }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
