@@ -13,6 +13,7 @@ variable "root_size" {}
 variable "hostname" {}
 
 variable "packages" {}
+variable "services" {}
 variable "extlinux_modules" {}
 variable "kernel_features" {}
 variable "kernel_modules" {}
@@ -32,7 +33,7 @@ source "hcloud" "alpine" {
 
 build {
   name = "alpine"
-  
+
   source "source.hcloud.alpine" {
     snapshot_name = "alpine"
     snapshot_labels = {

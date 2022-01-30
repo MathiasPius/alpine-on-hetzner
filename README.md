@@ -88,8 +88,9 @@ users:
 # Development
 I have a number of ideas I would like to explore:
 
-* Re-using or expanding this tool to provision Alpine Linux on dedicated servers, but maintaining the same configuration interface. I've previously done a less refined version fo this project for dedicated servers [here](https://github.com/MathiasPius/hetzner-zfs-host)
-* Splitting up configuration files so you can mix-and-match a little more. Would also allow optional *hardened* configurations for example which you could opt into for stricter security.
-* Creating configuration files for older versions of Alpine Linux.
-* Pipelining alpine-on-hetzner docker image builds and perhaps more importantly testing that they work.
-* Add more customization abilities to the configuration file. Being able to enable openrc services with a simple array for example would be simple to implement and very useful.
+- [ ] Re-using or expanding this tool to provision Alpine Linux on dedicated servers, but maintaining the same configuration -interface. I've previously done a less refined version fo this project for dedicated servers [here](https://github.com/MathiasPius/hetzner-zfs-host)
+- [ ] Splitting up configuration files so you can mix-and-match a little more. Would also allow optional *hardened* configurations for example which you could opt into for stricter security.
+- [ ] Creating configuration files for older versions of Alpine Linux.
+- [x] Pipelining alpine-on-hetzner docker image builds and perhaps more importantly..
+- [ ] .. Testing that they work.
+- [x] Add more customization abilities to the configuration file. Being able to enable openrc services with a simple array for example would be simple to implement and very useful.

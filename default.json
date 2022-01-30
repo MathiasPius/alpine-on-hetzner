@@ -20,6 +20,27 @@
         "cloud-init":       "@community=21.4-r0"
     },
 
+    "services": {
+        "devfs":        "sysinit",
+        "dmesg":        "sysinit",
+        "mdev":         "sysinit",
+        "hwdrivers":    "sysinit",
+
+        "hwclock":      "boot",
+        "modules":      "boot",
+        "sysctl":       "boot",
+        "hostname":     "boot",
+        "bootmisc":     "boot",
+        "syslog":       "boot",
+        "networking":   "boot",
+
+        "mount-ro":     "shutdown",
+        "killprocs":    "shutdown",
+        "savecache":    "shutdown",
+
+        "sshd":         "default"
+    },
+
     "extlinux_modules": ["ext4"],
     "kernel_features": ["base", "ext4", "keymap", "virtio"],
     "kernel_modules": ["ipv6", "af_packet"]

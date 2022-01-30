@@ -111,24 +111,8 @@
 
   - name: configure services
     shell: |
-      chroot {{ chroot_directory }} rc-update add devfs sysinit
-      chroot {{ chroot_directory }} rc-update add dmesg sysinit
-      chroot {{ chroot_directory }} rc-update add mdev sysinit
-      chroot {{ chroot_directory }} rc-update add hwdrivers sysinit
-
-      chroot {{ chroot_directory }} rc-update add hwclock boot
-      chroot {{ chroot_directory }} rc-update add modules boot
-      chroot {{ chroot_directory }} rc-update add sysctl boot
-      chroot {{ chroot_directory }} rc-update add hostname boot
-      chroot {{ chroot_directory }} rc-update add bootmisc boot
-      chroot {{ chroot_directory }} rc-update add syslog boot
-      chroot {{ chroot_directory }} rc-update add networking boot
-
-      chroot {{ chroot_directory }} rc-update add mount-ro shutdown
-      chroot {{ chroot_directory }} rc-update add killprocs shutdown
-      chroot {{ chroot_directory }} rc-update add savecache shutdown
-
-      chroot {{ chroot_directory }} rc-update add sshd default
+      chroot {{ chroot_directory }} rc-update add {{ item.key }} {{ item.value }}
+    loop: "{{ services | dict2items }}"
 
   - name: enable cloud-init
     shell: |
