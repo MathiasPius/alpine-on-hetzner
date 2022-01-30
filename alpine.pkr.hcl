@@ -14,6 +14,8 @@ variable "hostname" {}
 
 variable "packages" {}
 variable "extlinux_modules" {}
+variable "kernel_features" {}
+variable "kernel_modules" {}
 
 locals {
   timestamp = formatdate("DD-MM-YY.hh-mm-ss", timestamp())
@@ -30,7 +32,7 @@ source "hcloud" "alpine" {
 
 build {
   name = "alpine"
-
+  
   source "source.hcloud.alpine" {
     snapshot_name = "alpine"
     snapshot_labels = {

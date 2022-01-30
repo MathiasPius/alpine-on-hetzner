@@ -146,8 +146,7 @@
     copy:
       dest: "{{ chroot_directory }}/etc/modules"
       content: |
-        af_packet
-        ipv6
+        {{ kernel_features | join("\n") }}
 
   - name: configure extlinux
     copy:
@@ -170,7 +169,8 @@
   - name: configure mkinitfs
     copy:
       dest: "{{ chroot_directory }}/etc/mkinitfs/mkinitfs.conf"
-      content: features="base ext4 keymap virtio"
+      content: |
+        features="{{ kernel_features | join(" ") }}"
 
   - name: install boot
     shell: |
