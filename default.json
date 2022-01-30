@@ -20,5 +20,5 @@
         "cloud-init":       "@community=21.4-r0"
     },
 
-    "extlinux_modules": ["sd-mod", "usb-storage", "ext4"]
+    "extlinux_modules": ["ext4"]
 }
