@@ -17,7 +17,7 @@ RUN apk add --no-cache          \
     packer=$PACKER_VERSION      \
     jq=$JQ_VERSION
 
-RUN adduser ansible -u "$UID" -D -h /home/ansible
+RUN adduser ansible -u "$UID" -D -h /home/ansible "$GID"
 
 USER ansible:"$GID"
 WORKDIR /home/ansible
