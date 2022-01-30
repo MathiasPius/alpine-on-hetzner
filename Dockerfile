@@ -19,7 +19,7 @@ RUN apk add --no-cache          \
 
 RUN adduser ansible -u "$UID" -D -h /home/ansible "$GID"
 
-USER ansible:"$GID"
+USER ansible
 WORKDIR /home/ansible
 COPY default.json                   default.json
 COPY alpine.pkr.hcl                 alpine.pkr.hcl
