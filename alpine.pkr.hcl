@@ -14,6 +14,7 @@ variable "hostname" {}
 
 variable "packages" {}
 variable "services" {}
+variable "nameservers" {}
 variable "extlinux_modules" {}
 variable "kernel_features" {}
 variable "kernel_modules" {}

@@ -58,10 +58,9 @@
   - name: copy resolv conf from the rescue system to the server
     copy:
       content: |
-        nameserver 185.12.64.1
-        nameserver 185.12.64.2
-        nameserver 2a01:4ff:ff00::add:1
-        nameserver 2a01:4ff:ff00::add:2
+        {% for nameserver in nameservers %}
+        nameserver {{ nameserver }}
+        {% endfor %}
       dest: "{{ chroot_directory }}/etc/resolv.conf"
 
   - name: setup networking
