@@ -1,14 +1,18 @@
 # alpine-hetzner
 Tool for building cloud-init ready Alpine snapshots on Hetzner Cloud.
 
+You can either run it as a docker container or as a regular packer build (see [entrypoint.sh](/entrypoint.sh) for hints on how), but this latter method is not officially supported.
+
 # Examples
 
 ## Create an alpine image with the [default](/default.json) configuration
+Running this will create an `alpine` snapshot within your Hetzner Cloud project, ready to use for creating new servers. See the [launching a server](#launching-a-server) section for how to test it!
 ```shell
 docker run -it --rm -e "HCLOUD_TOKEN=<YourTokenHere>" alpine-on-hetzner:latest
 ```
 
 ## Default image, with `doas` installed, and `template.local` as default hostname
+Configuration values can be overwritten by creating new configuration file with just the changes you want, and supplying the path as an argument when running it.
 ```shell
 mkdir -p configs
 echo '{ 
@@ -62,7 +66,6 @@ The package will be appended to `packages` array, like so, immediately before th
 }
 ```
 
-
 # What's in the finished snapshot?
 See the [default.json](/default.json) config for a list of packages that will be installed into the snapshot if run without any arguments.
 
@@ -72,7 +75,7 @@ See the [default.json](/default.json) config for a list of packages that will be
 # How it works
 The docker image comes with packer, ansible and jq pre-installed (check labels for versions), and builds the [alpine.pkr.hcl](/alpine.pkr.hcl) build against your Hetzner Cloud project using your provided API key. The Packer build will boot a server in rescue mode, then format and install Alpine Linux onto the primary drive of the server. Once done, the server will be saved as a snapshot and shut down. You can then create Alpine Linux servers using the finished snapshot.
 
-# Launching the server
+# Launching a server
 Servers built from the snapshot won't be immediately accessible because the root user is locked by default, but can be configured using the Hetzner interface. Use the following cloud-init config to enable root access and select an ssh key when creating the server to allow login:
 ```yaml
 #cloud-config
