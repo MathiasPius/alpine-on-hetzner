@@ -1,19 +1,35 @@
 # alpine-hetzner
+Tool for building cloud-init ready Alpine snapshots on Hetzner Cloud.
+
+# Examples
+
+## Create an alpine image with the [default](/default.json) configuration
+```shell
+docker run -it --rm -e "HCLOUD_TOKEN=<YourTokenHere>" alpine-on-hetzner:latest
+```
+
+## Default image, with `doas` installed, and `template.local` as default hostname
+```shell
+mkdir -p configs
+echo '{ 
+  "packages": { "doas": "=6.8.1-r7" },
+  "hostname": "template.local"
+}' > configs/my-override.json
 
 
-
-# Usage
-Create an alpine image with the [default](/default.json) configuration:
-```bash
-$ docker run -it --rm -e "HCLOUD_TOKEN=<YourTokenHere>" alpine-on-hetzner:latest
+export HCLOUD_TOKEN=myHetznerCloudToken
+docker run -it --rm                     \
+    -e "HCLOUD_TOKEN"                   \
+    -v "$(pwd)/configs:/configs"        \
+    alpine-on-hetzner:latest default.json /configs/my-override.json
 ```
 
 There are a number of optional docker mounts you can use:
 * `/manifests` contains the output manifests from the run.
 * `/cache` used for caching the `apk-tools` package locally between runs.
-* `/configs` used for providing [custom configuration](#configuration) to builds, such as extra packages.
+* `/configs` used for providing [custom configuration files](#custom-configuration) to builds.
 
-# Configuration
+# Custom Configuration
 Any command arguments passed to the docker run invocation will be treated as paths to configuration files to merge into a single combined configuration file which is then fed into the packer build.
 
 The merge is a "deep merge", meaning you can only *add to* or *change* the configuration file not remove from it. If you want to remove a package from the default.json configuration for example you will have to create a copy of it without the package in question and use that as the basis for your build.
@@ -32,7 +48,7 @@ docker run -it --rm                     \
     -v "$(pwd)/configs:/configs"        \
     alpine-on-hetzner:latest default.json /configs/nginx.json
 ```
-The package will be appended to `packages` array, like os:
+The package will be appended to `packages` array, like so, immediately before the packer build runs:
 ```json
 {
   (...)
@@ -51,13 +67,13 @@ The package will be appended to `packages` array, like os:
 See the [default.json](/default.json) config for a list of packages that will be installed into the snapshot if run without any arguments.
 
 [playbook.yml](/playbook.yml) contains the entire ansible playbook used for generating the snapshot.
+[alpine.pkr.hcl](/alpine.pkr.hcl) contains the packer build configuration which uses the playbook above via the [Ansible Provisioner](https://www.packer.io/plugins/provisioners/ansible/ansible)
 
 # How it works
-The docker image comes with packer and ansible pre-installed (check labels for versions), and builds the [alpine.pkr.hcl](/alpine.pkr.hcl) build against your Hetzner Cloud project using your provided API key. The Packer build will boot a server in rescue mode, then format and install Alpine Linux onto the primary drive of the server. Once done, the server will be saved as a snapshot and shut down. You can then create Alpine Linux servers using the finished snapshot.
-
+The docker image comes with packer, ansible and jq pre-installed (check labels for versions), and builds the [alpine.pkr.hcl](/alpine.pkr.hcl) build against your Hetzner Cloud project using your provided API key. The Packer build will boot a server in rescue mode, then format and install Alpine Linux onto the primary drive of the server. Once done, the server will be saved as a snapshot and shut down. You can then create Alpine Linux servers using the finished snapshot.
 
 # Launching the server
-Servers built from the snapshot won't be immediately accessible, but can be configured using the Hetzner interface. Use the following cloud-init config to enable root access and select an ssh key when creating the server to allow login:
+Servers built from the snapshot won't be immediately accessible because the root user is locked by default, but can be configured using the Hetzner interface. Use the following cloud-init config to enable root access and select an ssh key when creating the server to allow login:
 ```yaml
 #cloud-config
 disable_root: false
@@ -65,3 +81,12 @@ users:
 - name: root
   lock-passwd: false
 ```
+
+# Development
+I have a number of ideas I would like to explore:
+
+* Re-using or expanding this tool to provision Alpine Linux on dedicated servers, but maintaining the same configuration interface. I've previously done a less refined version fo this project for dedicated servers [here](https://github.com/MathiasPius/hetzner-zfs-host)
+* Splitting up configuration files so you can mix-and-match a little more. Would also allow optional *hardened* configurations for example which you could opt into for stricter security.
+* Creating configuration files for older versions of Alpine Linux.
+* Pipelining alpine-on-hetzner docker image builds and perhaps more importantly testing that they work.
+* Add more customization abilities to the configuration file. Being able to enable openrc services with a simple array for example would be simple to implement and very useful.
