@@ -38,18 +38,19 @@ jobs:
             type=ref,event=pr
             type=sha
 
-      - name: Registry names must be manually lowercased when used in the cache-from parameter
-        uses: actions/github-script@v4
-        id: lowercased_name
+      - name: Extract commit sha so we can hopefully reuse layers
+        id: commit-sha
+        uses: docker/metadata-action@v3
         with:
-          result-encoding: string
-          script: return `${github.repository.toLowerCase()}`
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          cache-from: type=registry,ref=${{ steps.lowercased_name.outputs.result }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{ steps.meta.outputs.tags[0] }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
