@@ -63,7 +63,7 @@
         nameserver 2a01:4ff:ff00::add:1
         nameserver 2a01:4ff:ff00::add:2
       dest: "{{ chroot_directory }}/etc/resolv.conf"
-  
+
   - name: setup networking
     copy:
       content: |
@@ -149,31 +149,31 @@
         af_packet
         ipv6
 
-  # - name: configure extlinux
-  #   copy:
-  #     dest: "{{ chroot_directory }}/etc/update-extlinux.conf"
-  #     content: |
-  #       overwrite=1
-  #       vesa_menu=0
-  #       default_kernel_opts="quiet"
-  #       modules=sd-mod,usb-storage,ext4
-  #       root={{ root_device_path }}
-  #       verbose=0
-  #       hidden=1
-  #       timeout=1
-  #       default=grsec
-  #       serial_port=
-  #       serial_baud=115200
-  #       xen_opts=dom0_mem=256M
-  #       password=''
+  - name: configure extlinux
+    copy:
+      dest: "{{ chroot_directory }}/etc/update-extlinux.conf"
+      content: |
+        overwrite=1
+        vesa_menu=0
+        default_kernel_opts="quiet"
+        modules={{ extlinux_modules | join(",") }}
+        root=
+        verbose=0
+        hidden=1
+        timeout=1
+        default=lts
+        serial_port=
+        serial_baud=115200
+        xen_opts=dom0_mem=384M
+        password=''
 
   - name: configure mkinitfs
     copy:
       dest: "{{ chroot_directory }}/etc/mkinitfs/mkinitfs.conf"
       content: features="ata base cdrom ext4 keymap kms mmc raid scsi usb virtio"
 
-  # chroot {{ chroot_directory }} update-extlinux
   - name: install boot
     shell: |
+      chroot {{ chroot_directory }} update-extlinux
       chroot {{ chroot_directory }} extlinux -i /boot
       chroot {{ chroot_directory }} dd bs=440 conv=notrunc count=1 if=/usr/share/syslinux/gptmbr.bin of={{ root_device_path }}
