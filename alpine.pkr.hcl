@@ -16,7 +16,6 @@ variable "packages" {}
 variable "extlinux_modules" {}
 
 locals {
-  password = sha1(uuidv4())
   timestamp = formatdate("DD-MM-YY.hh-mm-ss", timestamp())
   snapshot_id = sha1(uuidv4())
 }
@@ -44,16 +43,15 @@ build {
 
   provisioner "ansible" {
     playbook_file = "playbook.yml"
-    extra_arguments = ["--extra-vars", "@default.json", "--extra-vars", "root_password=${bcrypt(local.password)}"]
+    extra_arguments = ["--extra-vars", "@config.json"]
   }
 
   post-processor "manifest" {
     output = "/manifests/${build.PackerRunUUID}.json"
     strip_path = true
     custom_data = merge({
-      "root_password":                  local.password,
       "alpine.pius.dev/alpine-version": var.alpine_version,
-      "alpine.pius.dev/run-id":         build.PackerRunUUID,
+      "alpine.pius.dev/packer-run-id":  build.PackerRunUUID,
       "alpine.pius.dev/snapshot-id":    local.snapshot_id
     }, zipmap(
       formatlist("alpine.pius.dev/%s-version", keys(var.packages)),

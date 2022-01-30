@@ -14,12 +14,10 @@
     "hostname": "alpine-{{ alpine_version }}",
 
     "packages": {
-        "doas":             "=6.8.1-r7",
         "openssh":          "=8.8_p1-r1",
         "syslinux":         "=6.04_pre1-r9",
         "linux-virt":       "=5.15.16-r0",
-        "cloud-init":       "@community=21.4-r0",
-        "qemu-guest-agent": "@community=6.1.0-r2"
+        "cloud-init":       "@community=21.4-r0"
     },
 
     "extlinux_modules": ["sd-mod", "usb-storage", "ext4"]
