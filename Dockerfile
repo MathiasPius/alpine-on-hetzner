@@ -19,6 +19,9 @@ RUN apk add --no-cache          \
 
 RUN adduser ansible -u "$UID" -D -h /home/ansible "$GID"
 
+RUN mkdir -p /configs /manifests /cache \
+    && chown ansible /manifests /configs /cache
+
 USER ansible
 WORKDIR /home/ansible
 COPY default.json                   default.json
