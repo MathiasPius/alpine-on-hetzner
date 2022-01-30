@@ -31,7 +31,7 @@ VOLUME /cache
 ENTRYPOINT ["/bin/sh", "entrypoint.sh"]
 CMD ["default.json"]
 
-LABEL "alpine.pius.dev/alpine-version"=$ALPINE_VERSION
-LABEL "alpine.pius.dev/ansible/version"=$ANSIBLE_VERSION
-LABEL "alpine.pius.dev/packer/version"=$PACKER_VERSION
-LABEL "alpine.pius.dev/jq/version"=$JQ_VERSION
+LABEL "dev.pius.alpine-on-hetzner.alpine.version"=$ALPINE_VERSION
+LABEL "dev.pius.alpine-on-hetzner.pkgs.ansible.version"=$ANSIBLE_VERSION
+LABEL "dev.pius.alpine-on-hetzner.pkgs.packer.version"=$PACKER_VERSION
+LABEL "dev.pius.alpine-on-hetzner.pkgs.jq.version"=$JQ_VERSION

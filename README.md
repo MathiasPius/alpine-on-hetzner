@@ -8,7 +8,7 @@ You can either run it as a docker container or as a regular packer build (see [e
 ## Create an alpine image with the [default](/default.json) configuration
 Running this will create an `alpine` snapshot within your Hetzner Cloud project, ready to use for creating new servers. See the [launching a server](#launching-a-server) section for how to test it!
 ```shell
-docker run -it --rm -e "HCLOUD_TOKEN=<YourTokenHere>" alpine-on-hetzner:latest
+docker run -it --rm -e "HCLOUD_TOKEN=<YourTokenHere>" ghcr.io/mathiaspius/alpine-on-hetzner:latest
 ```
 
 ## Default image, with `doas` installed, and `template.local` as default hostname
@@ -25,7 +25,7 @@ export HCLOUD_TOKEN=myHetznerCloudToken
 docker run -it --rm                     \
     -e "HCLOUD_TOKEN"                   \
     -v "$(pwd)/configs:/configs"        \
-    alpine-on-hetzner:latest default.json /configs/my-override.json
+    ghcr.io/mathiaspius/alpine-on-hetzner:latest default.json /configs/my-override.json
 ```
 
 There are a number of optional docker mounts you can use:
@@ -50,7 +50,7 @@ When the container is then run like so:
 docker run -it --rm                     \
     -e "HCLOUD_TOKEN"                   \
     -v "$(pwd)/configs:/configs"        \
-    alpine-on-hetzner:latest default.json /configs/nginx.json
+    ghcr.io/mathiaspius/alpine-on-hetzner:latest default.json /configs/nginx.json
 ```
 The package will be appended to `packages` array, like so, immediately before the packer build runs:
 ```json
