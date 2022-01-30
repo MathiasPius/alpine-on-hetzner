@@ -8,7 +8,7 @@
     "alpine_mirror":       "http://dl-cdn.alpinelinux.org/alpine",
     "alpine_repositories": ["main", "community"],
 
-    "boot_size": "+512m",
+    "boot_size": "+100m",
     "root_size": "0",
 
     "hostname": "alpine",
