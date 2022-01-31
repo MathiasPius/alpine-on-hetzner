@@ -137,7 +137,7 @@
       content: |
         overwrite=1
         vesa_menu=0
-        default_kernel_opts="quiet"
+        default_kernel_opts="{{ default_kernel_opts | join(" ") }}"
         modules={{ extlinux_modules | join(",") }}
         root=
         verbose=0

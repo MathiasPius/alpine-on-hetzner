@@ -17,6 +17,7 @@ variable "services" {}
 variable "extlinux_modules" {}
 variable "kernel_features" {}
 variable "kernel_modules" {}
+variable "default_kernel_opts" {}
 
 locals {
   timestamp = formatdate("DD-MM-YY.hh-mm-ss", timestamp())
@@ -39,7 +40,6 @@ build {
     snapshot_labels = {
       "alpine.pius.dev/timestamp"           = local.timestamp
       "alpine.pius.dev/alpine-version"      = var.alpine_version
-      "alpine.pius.dev/alpine-repositories" = join("-", var.alpine_repositories)
       "alpine.pius.dev/snapshot-id"         = local.snapshot_id
     }
   }
