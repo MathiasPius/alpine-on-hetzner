@@ -1,19 +1,19 @@
 ARG ALPINE_VERSION=3.15.0
 ARG PACKER_VERSION=1.7.8-r1
-ARG ANSIBLE_VERSION=4.8.0-r0
+ARG ANSIBLE_CORE_VERSION=2.11.6-r1
 ARG JQ_VERSION=1.6-r1
 ARG UID=1000
 ARG GID=1000
 
 FROM alpine:$ALPINE_VERSION
 ARG PACKER_VERSION
-ARG ANSIBLE_VERSION
+ARG ANSIBLE_CORE_VERSION
 ARG JQ_VERSION
 ARG UID
 ARG GID
 
 RUN apk add --no-cache          \
-    ansible=$ANSIBLE_VERSION    \
+    ansible-core=$ANSIBLE_CORE_VERSION    \
     packer=$PACKER_VERSION      \
     jq=$JQ_VERSION
 
@@ -35,6 +35,6 @@ ENTRYPOINT ["/bin/sh", "entrypoint.sh"]
 CMD ["default.json"]
 
 LABEL "dev.pius.alpine-on-hetzner.alpine.version"=$ALPINE_VERSION
-LABEL "dev.pius.alpine-on-hetzner.pkgs.ansible.version"=$ANSIBLE_VERSION
+LABEL "dev.pius.alpine-on-hetzner.pkgs.ansible-core.version"=$ANSIBLE_CORE_VERSION
 LABEL "dev.pius.alpine-on-hetzner.pkgs.packer.version"=$PACKER_VERSION
 LABEL "dev.pius.alpine-on-hetzner.pkgs.jq.version"=$JQ_VERSION
