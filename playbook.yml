@@ -122,8 +122,8 @@
     copy:
       dest: "{{ chroot_directory }}/etc/fstab"
       content: |
-        LABEL=root  /      ext4  defaults,noatime   0 0
-        LABEL=boot  /boot  ext4  defaults           0 2
+        {{ root_device_path }}2  /      ext4  defaults,noatime   0 0
+        {{ root_device_path }}1  /boot  ext4  defaults           0 2
     
   - name: configure kernel modules
     copy:
@@ -139,7 +139,7 @@
         vesa_menu=0
         default_kernel_opts="{{ default_kernel_opts | join(" ") }}"
         modules={{ extlinux_modules | join(",") }}
-        root=
+        root={{ root_device_path }}2
         verbose=0
         hidden=1
         timeout=1
