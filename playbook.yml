@@ -129,7 +129,7 @@
     copy:
       dest: "{{ chroot_directory }}/etc/modules"
       content: |
-        {{ kernel_features | join("\n") }}
+        {{ kernel_modules | join("\n") }}
 
   - name: configure extlinux
     copy:
