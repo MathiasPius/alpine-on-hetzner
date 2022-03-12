@@ -116,6 +116,7 @@
   - name: enable cloud-init
     shell: |
       chroot {{ chroot_directory }} setup-cloud-init
+    when: packages["cloud-init"] is defined
 
   - name: configure fstab
     copy:
