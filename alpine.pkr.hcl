@@ -37,7 +37,7 @@ build {
   name = "alpine"
 
   source "source.hcloud.alpine" {
-    snapshot_name = "alpine"
+    snapshot_name = var.hostname
     snapshot_labels = {
       "alpine.pius.dev/timestamp"           = local.timestamp
       "alpine.pius.dev/alpine-version"      = var.alpine_version
