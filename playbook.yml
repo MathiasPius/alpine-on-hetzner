@@ -172,5 +172,8 @@
       chroot {{ chroot_directory }} dd bs=440 conv=notrunc count=1 if=/usr/share/syslinux/gptmbr.bin of={{ root_device_path }}
 
   - name: execute arbitrary commands
-    shell: "chroot {{ chroot_directory }} sh -c '{{ item }}'"
+    shell: |
+      chroot {{ chroot_directory }} sh <<CHROOT_COMMAND_HD
+      {{ item }}
+      CHROOT_COMMAND_HD
     loop: "{{ chroot_commands }}"
