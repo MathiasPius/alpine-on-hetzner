@@ -20,6 +20,7 @@ variable "kernel_features" {}
 variable "kernel_modules" {}
 variable "default_kernel_opts" {}
 variable "sysctl" {}
+variable "chroot_commands" {}
 
 locals {
   timestamp = formatdate("DD-MM-YY.hh-mm-ss", timestamp())

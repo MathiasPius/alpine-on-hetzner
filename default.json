@@ -52,5 +52,6 @@
     "extlinux_modules": ["ext4"],
     "kernel_features": ["base", "ext4", "keymap", "virtio"],
     "kernel_modules": ["ipv6", "af_packet"],
-    "default_kernel_opts": ["quiet"]
+    "default_kernel_opts": ["quiet"],
+    "chroot_commands": []
 }

@@ -124,7 +124,7 @@
       content: |
         {{ root_device_path }}2  /      ext4  defaults,noatime   0 0
         {{ root_device_path }}1  /boot  ext4  defaults           0 2
-    
+
   - name: configure sysctl
     copy:
       dest: "{{ chroot_directory }}/etc/sysctl.conf"
@@ -170,3 +170,7 @@
       chroot {{ chroot_directory }} update-extlinux
       chroot {{ chroot_directory }} extlinux -i /boot
       chroot {{ chroot_directory }} dd bs=440 conv=notrunc count=1 if=/usr/share/syslinux/gptmbr.bin of={{ root_device_path }}
+
+  - name: execute arbitrary commands
+    shell: "chroot {{ chroot_directory }} sh -c '{{ item }}'"
+    loop: "{{ chroot_commands }}"
