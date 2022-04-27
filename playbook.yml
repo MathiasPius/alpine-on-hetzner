@@ -125,6 +125,14 @@
         {{ root_device_path }}2  /      ext4  defaults,noatime   0 0
         {{ root_device_path }}1  /boot  ext4  defaults           0 2
     
+  - name: configure sysctl
+    copy:
+      dest: "{{ chroot_directory }}/etc/sysctl.conf"
+      content: |
+        {% for setting in sysctl | dict2items %}
+        {{ setting.key }} = {{ setting.value }}
+        {% endfor %}
+    
   - name: configure kernel modules
     copy:
       dest: "{{ chroot_directory }}/etc/modules"

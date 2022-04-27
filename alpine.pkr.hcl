@@ -19,6 +19,7 @@ variable "extlinux_modules" {}
 variable "kernel_features" {}
 variable "kernel_modules" {}
 variable "default_kernel_opts" {}
+variable "sysctl" {}
 
 locals {
   timestamp = formatdate("DD-MM-YY.hh-mm-ss", timestamp())
