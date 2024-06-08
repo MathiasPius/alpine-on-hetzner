@@ -94,3 +94,4 @@ I have a number of ideas I would like to explore:
 - [x] Pipelining alpine-on-hetzner docker image builds and perhaps more importantly..
 - [ ] .. Testing that they work.
 - [x] Add more customization abilities to the configuration file. Being able to enable openrc services with a simple array for example would be simple to implement and very useful.
+
